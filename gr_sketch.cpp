@@ -119,6 +119,8 @@ void setup() {
   mrb_setup_arduino();
 
   Serial.write("> ");
+
+  ai = mrb_gc_arena_save(mrb);
 }
 
 void loop() {
@@ -144,6 +146,10 @@ void loop() {
 
     /* parse code */
     parser = mrb_parser_new(mrb);
+		if (parser == NULL) {
+			Serial.println("create parser state error");
+      exit(-1);
+    }
     parser->s = ruby_code;
     parser->send = ruby_code + strlen(ruby_code);
     parser->lineno = 1;
@@ -155,39 +161,42 @@ void loop() {
       Serial.println(parser->error_buffer[0].message);
     }
     else {
-      /* generate bytecode */
-			struct RProc *proc = mrb_generate_code(mrb, parser);
-			if (proc == NULL) {
-				Serial.println("mrb_generate_code error");
-				mrb_parser_free(parser);
-				exit(-1);
-			}
-
-			/* pass a proc for evaluation */
-			/* evaluate the bytecode */
-			result = mrb_vm_run(mrb,
-					proc,
-					mrb_top_self(mrb),
-					stack_keep);
-			stack_keep = proc->body.irep->nlocals;
-      /* did an exception occur? */
-      if (mrb->exc) {
-        /* yes */
-        p(mrb, mrb_obj_value(mrb->exc), 0);
-        mrb->exc = 0;
-      }
-      else {
-				/* no */
-				if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
-					result = mrb_any_to_s(mrb, result);
-				}
-				p(mrb, result, 1);
-      }
-      ruby_code[0] = '\0';
-      last_code_line[0] = '\0';
-      //mrb_gc_arena_restore(mrb, ai);
-      mrb_parser_free(parser);
-      Serial.write("> ");
+			Serial.println("Syntax OK");
+    //   /* generate bytecode */
+		// 	struct RProc *proc = mrb_generate_code(mrb, parser);
+		// 	if (proc == NULL) {
+		// 		Serial.println("mrb_generate_code error");
+		// 		mrb_parser_free(parser);
+		// 		exit(-1);
+		// 	}
+		//
+		// 	/* pass a proc for evaluation */
+		// 	/* evaluate the bytecode */
+		// 	result = mrb_vm_run(mrb,
+		// 			proc,
+		// 			mrb_top_self(mrb),
+		// 			stack_keep);
+		// 	stack_keep = proc->body.irep->nlocals;
+    //   /* did an exception occur? */
+    //   if (mrb->exc) {
+    //     /* yes */
+    //     p(mrb, mrb_obj_value(mrb->exc), 0);
+    //     mrb->exc = 0;
+    //   }
+    //   else {
+		// 		/* no */
+		// 		if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
+		// 			result = mrb_any_to_s(mrb, result);
+		// 		}
+		// 		p(mrb, result, 1);
+    //   }
     }
+		ruby_code[0] = '\0';
+		last_code_line[0] = '\0';
+		mrb_gc_arena_restore(mrb, ai);
+
+		mrb_parser_free(parser);
+		mrb_full_gc(mrb);
+		Serial.write("> ");
   }
 }
