@@ -162,13 +162,16 @@ void loop() {
     }
     else {
       Serial.println("Syntax OK");
-    //   /* generate bytecode */
-    //   struct RProc *proc = mrb_generate_code(mrb, parser);
-    //   if (proc == NULL) {
-    //     Serial.println("mrb_generate_code error");
-    //     mrb_parser_free(parser);
-    //     exit(-1);
-    //   }
+      /* generate bytecode */
+      struct RProc *proc = mrb_generate_code(mrb, parser);
+      if (proc == NULL) {
+        Serial.println("mrb_generate_code error");
+        mrb_parser_free(parser);
+        exit(-1);
+      }
+
+      Serial.println("Generate bytecode OK");
+
     //
     //   /* pass a proc for evaluation */
     //   /* evaluate the bytecode */
