@@ -4,6 +4,15 @@
 #include "mruby/proc.h"
 #include "mruby/string.h"
 
+// Define if you want to debug
+// #define DEBUG
+
+#ifdef DEBUG
+#  define DEBUG_PRINT(m,v)    { Serial.print("** "); Serial.print((m)); Serial.print(":"); Serial.println((v)); }
+#else
+#  define DEBUG_PRINT(m,v)    // do nothing
+#endif
+
 static void
 printstr(mrb_state *mrb, mrb_value obj, int new_line)
 {
@@ -78,6 +87,20 @@ print_hint(void)
   Serial.println("gr-mirb - Embeddable Interactive Ruby Shell for Gadget Renesas");
 }
 
+#ifndef ENABLE_READLINE
+/* Print the command line prompt of the REPL */
+static void
+print_cmdline(int code_block_open)
+{
+  if (code_block_open) {
+    Serial.print("* ");
+  }
+  else {
+    Serial.print("> ");
+  }
+}
+#endif
+
 mrb_state *mrb;
 mrbc_context *cxt;
 int ai;
@@ -91,7 +114,7 @@ byte incommingByte;
 char last_code_line[1024] = { 0 };
 char ruby_code[1024] = { 0 };
 int char_index;
-int code_block_open = false;
+mrb_bool code_block_open = FALSE;
 unsigned int stack_keep = 0;
 
 void setup() {
@@ -120,19 +143,32 @@ void setup() {
   mrbc_filename(mrb, cxt, "(mirb)");
 
   ai = mrb_gc_arena_save(mrb);
+
+  print_cmdline(code_block_open);
 }
 
 void loop() {
   if (Serial.available() > 0) {
+
     char_index = 0;
     while (true) {
       if (Serial.available() > 0) {
         incommingByte = Serial.read();
+        DEBUG_PRINT("Serial.read", incommingByte);
+
         if (incommingByte == 13) {
           // New Line
           last_code_line[char_index] = '\0';
           break;
-        } else {
+        }
+        else if (incommingByte == 127) {
+          // Backspace
+    			char_index--;
+    			if (char_index < 0) {
+            char_index = 0;
+          }
+    		}
+        else {
           last_code_line[char_index++] = incommingByte;
           Serial.write(incommingByte);
         }
@@ -195,6 +231,6 @@ void loop() {
 
     mrb_parser_free(parser);
     mrb_full_gc(mrb);
-    Serial.write("> ");
+    print_cmdline(code_block_open);
   }
 }
