@@ -39,6 +39,9 @@ make
 - 出来上がったcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
 ## TODO
-- カーソルやバックスペースなどのキーを正しく処理する
+- line inputの関数を実装する
+- カーソルキーを正しく処理する
+- backspaceキーを正しく処理する
+- GR-CITRUSのピン番号を定数として定義する
 - code blockに対応する
 - 本家mrubyのmirbをベースに書き直す
