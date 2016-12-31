@@ -4,6 +4,19 @@
 #include "mruby/proc.h"
 #include "mruby/string.h"
 
+static void
+printstr(mrb_state *mrb, mrb_value obj, int new_line)
+{
+  mrb_value str;
+
+  str = mrb_funcall(mrb, obj, "to_s", 0);
+  Serial.write(RSTRING_PTR(str), RSTRING_LEN(str));
+  if (new_line)
+  {
+    Serial.println("");
+  }
+}
+
 /* Redirecting #p to Serial */
 static void
 p(mrb_state *mrb, mrb_value obj, int prompt)
@@ -17,7 +30,7 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
       obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
     }
   }
-  Serial.println(RSTRING_PTR(obj));
+  printstr(mrb, obj, 1);
 }
 
 mrb_value
@@ -29,18 +42,6 @@ my_p(mrb_state *mrb, mrb_value self)
   p(mrb, argv, 0);
 
   return argv;
-}
-
-static void
-printstr(mrb_state *mrb, mrb_value obj, int new_line)
-{
-  mrb_value str;
-
-  str = mrb_funcall(mrb, obj, "to_s", 0);
-  if (new_line)
-    Serial.println(RSTRING_PTR(str));
-  else
-    Serial.write(RSTRING_PTR(str));
 }
 
 mrb_value
