@@ -104,4 +104,12 @@ MRuby::CrossBuild.new("RX630") do |conf|
   #light-weight regular expression
   #conf.gem :github => "masamitsu-murase/mruby-hs-regexp", :branch => "master"
 
+  #Arduino API
+  GR_MRUBY_FIRMWARE_PATH = '..'
+  conf.gem '../mruby-arduino' do |g|
+    g.cc.flags << " -DGRSAKURA -DARDUINO=100 "
+    g.cc.include_paths << ["#{GR_MRUBY_FIRMWARE_PATH}/gr_common/lib/", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common/core" ]
+    g.cxx.flags = g.cc.flags.dup
+    g.cxx.include_paths = g.cc.include_paths.dup
+  end
 end
