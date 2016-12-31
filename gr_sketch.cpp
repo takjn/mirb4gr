@@ -101,21 +101,20 @@ print_cmdline(int code_block_open)
 }
 #endif
 
-mrb_state *mrb;
-mrbc_context *cxt;
-int ai;
-struct mrb_parser_state *parser;
-int n;
-mrb_value result;
-struct RClass *krn;
-struct RClass *led;
-
-byte incommingByte;
 char last_code_line[1024] = { 0 };
 char ruby_code[1024] = { 0 };
-int char_index;
+mrbc_context *cxt;
+struct mrb_parser_state *parser;
+mrb_state *mrb;
+mrb_value result;
+int n;
+int i;
 mrb_bool code_block_open = FALSE;
+int ai;
 unsigned int stack_keep = 0;
+
+byte incommingByte;
+int char_index;
 
 void setup() {
   pinMode(PIN_LED0, OUTPUT);
@@ -130,6 +129,7 @@ void setup() {
   }
 
   // Redirecting stdout to Serial
+  struct RClass *krn;
   krn = mrb->kernel_module;
   mrb_define_method(mrb, krn, "p", my_p, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, krn, "print", my_print, MRB_ARGS_REQ(1));
@@ -163,10 +163,11 @@ void loop() {
         }
         else if (incommingByte == 127 || incommingByte == 8) {
           // Backspace
-          Serial.print("\b");
     			char_index--;
     			if (char_index < 0) {
             char_index = 0;
+          } else {
+            Serial.print("\b");
           }
     		}
         else {
