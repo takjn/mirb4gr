@@ -25,12 +25,14 @@ make
 
 以下のようなメッセージが出力されていれば成功です。
 
-> ================================================
->       Config Name: RX630
->  Output Directory: build/RX630
->     Included Gems:
->              mruby-compiler - mruby compiler library
-> ================================================
+```
+================================================
+      Config Name: RX630
+ Output Directory: build/RX630
+    Included Gems:
+             mruby-compiler - mruby compiler library
+================================================
+```
 
 ### citrus_sketch.binのmake
 - gr-mirbフォルダに戻り、makefileの``GNU_PATH``を適切に修正してからmakeしてください。
