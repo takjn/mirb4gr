@@ -21,16 +21,21 @@ printstr(mrb_state *mrb, mrb_value obj, int new_line)
 static void
 p(mrb_state *mrb, mrb_value obj, int prompt)
 {
-  obj = mrb_funcall(mrb, obj, "inspect", 0);
+  mrb_value val;
+
+  val = mrb_funcall(mrb, obj, "inspect", 0);
   if (prompt) {
     if (!mrb->exc) {
-      Serial.write(" => ");
+      printf(" => ");
     }
     else {
-      obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+      val = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
     }
   }
-  printstr(mrb, obj, 1);
+  if (!mrb_string_p(val)) {
+    val = mrb_obj_as_string(mrb, obj);
+  }
+  printstr(mrb, val, 1);
 }
 
 mrb_value
@@ -70,14 +75,7 @@ my_puts(mrb_state *mrb, mrb_value self)
 static void
 print_hint(void)
 {
-  Serial.println("");
-  Serial.println("");
-  Serial.println("");
-  Serial.println("IAS - Interactive Arduino Shell");
-  Serial.println("");
-  Serial.println("This is a very early version, please test and report errors.");
-  Serial.println("Thanks :)");
-  Serial.println("");
+  Serial.println("gr-mirb - Embeddable Interactive Ruby Shell for Gadget Renesas");
 }
 
 mrb_state *mrb;
@@ -88,21 +86,6 @@ int n;
 mrb_value result;
 struct RClass *krn;
 struct RClass *led;
-
-void
-mrb_setup_arduino() {
-  mrb = mrb_open();
-  print_hint();
-
-  cxt = mrbc_context_new(mrb);
-  cxt->capture_errors = 1;
-  ai = mrb_gc_arena_save(mrb);
-
-  krn = mrb->kernel_module;
-  mrb_define_method(mrb, krn, "p", my_p, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, krn, "print", my_print, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, krn, "puts", my_puts, MRB_ARGS_REQ(1));
-}
 
 byte incommingByte;
 char last_code_line[1024] = { 0 };
@@ -117,9 +100,24 @@ void setup() {
 
   Serial.begin(115200);
 
-  mrb_setup_arduino();
+  mrb = mrb_open();
+  if (mrb == NULL) {
+    Serial.println("Invalid mrb interpreter, exiting mirb");
+    exit(EXIT_FAILURE);
+  }
 
-  Serial.write("> ");
+  // Redirecting stdout to Serial
+  krn = mrb->kernel_module;
+  mrb_define_method(mrb, krn, "p", my_p, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, krn, "print", my_print, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, krn, "puts", my_puts, MRB_ARGS_REQ(1));
+
+  print_hint();
+
+  cxt = mrbc_context_new(mrb);
+  cxt->capture_errors = TRUE;
+  cxt->lineno = 1;
+  mrbc_filename(mrb, cxt, "(mirb)");
 
   ai = mrb_gc_arena_save(mrb);
 }
@@ -149,7 +147,7 @@ void loop() {
     parser = mrb_parser_new(mrb);
     if (parser == NULL) {
       Serial.println("create parser state error");
-      exit(-1);
+      exit(EXIT_FAILURE);
     }
     parser->s = ruby_code;
     parser->send = ruby_code + strlen(ruby_code);
@@ -167,7 +165,7 @@ void loop() {
       if (proc == NULL) {
         Serial.println("mrb_generate_code error");
         mrb_parser_free(parser);
-        exit(-1);
+        exit(EXIT_FAILURE);
       }
 
       /* pass a proc for evaluation */
