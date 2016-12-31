@@ -40,6 +40,5 @@ make
 
 ## TODO
 - カーソルやバックスペースなどのキーを正しく処理する
-- mruby-arduinoを組み込む
 - code blockに対応する
 - 本家mrubyのmirbをベースに書き直す
