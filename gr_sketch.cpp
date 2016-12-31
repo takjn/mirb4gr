@@ -161,7 +161,6 @@ void loop() {
       Serial.println(parser->error_buffer[0].message);
     }
     else {
-      Serial.println("Syntax OK");
       /* generate bytecode */
       struct RProc *proc = mrb_generate_code(mrb, parser);
       if (proc == NULL) {
@@ -170,29 +169,26 @@ void loop() {
         exit(-1);
       }
 
-      Serial.println("Generate bytecode OK");
-
-    //
-    //   /* pass a proc for evaluation */
-    //   /* evaluate the bytecode */
-    //   result = mrb_vm_run(mrb,
-    //       proc,
-    //       mrb_top_self(mrb),
-    //       stack_keep);
-    //   stack_keep = proc->body.irep->nlocals;
-    //   /* did an exception occur? */
-    //   if (mrb->exc) {
-    //     /* yes */
-    //     p(mrb, mrb_obj_value(mrb->exc), 0);
-    //     mrb->exc = 0;
-    //   }
-    //   else {
-    //     /* no */
-    //     if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
-    //       result = mrb_any_to_s(mrb, result);
-    //     }
-    //     p(mrb, result, 1);
-    //   }
+      /* pass a proc for evaluation */
+      /* evaluate the bytecode */
+      result = mrb_vm_run(mrb,
+          proc,
+          mrb_top_self(mrb),
+          stack_keep);
+      stack_keep = proc->body.irep->nlocals;
+      /* did an exception occur? */
+      if (mrb->exc) {
+        /* yes */
+        p(mrb, mrb_obj_value(mrb->exc), 0);
+        mrb->exc = 0;
+      }
+      else {
+        /* no */
+        if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
+          result = mrb_any_to_s(mrb, result);
+        }
+        p(mrb, result, 1);
+      }
     }
     ruby_code[0] = '\0';
     last_code_line[0] = '\0';

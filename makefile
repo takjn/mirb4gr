@@ -7,7 +7,8 @@ HEADERFILES = ./gr_common/core/Arduino.h ./gr_common/core/binary.h ./gr_common/c
 TARGET = citrus_sketch
 GNU_PATH := /usr/share/gnurx_v14.03_elf-1/
 GCC_VERSION := 4.8-GNURX_v14.03
-CFLAGS :=-Wall -I"$(GNU_PATH)rx-elf/include" -I. -I"$(GNU_PATH)lib/gcc/rx-elf/$(GCC_VERSION)/include" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/rx-elf/64-bit-double/" -ffunction-sections -fno-function-cse -fsigned-char -fdata-sections -mno-balign -DTESTING=1 -DGRSAKURA -DARDUINO=100 -DCPPAPP -D__RX_LITTLE_ENDIAN__=1 -D__T4__ -O2 -flto -mlittle-endian-data -mcpu=rx600 -m64bit-doubles
+CFLAGS :=-Wall -I"$(GNU_PATH)rx-elf/include" -I. -I"$(GNU_PATH)lib/gcc/rx-elf/$(GCC_VERSION)/include" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/rx-elf/64-bit-double/" -ffunction-sections -fno-function-cse -fsigned-char -fdata-sections -mno-balign -DTESTING=1 -DGRSAKURA -DARDUINO=100 -DCPPAPP -D__RX_LITTLE_ENDIAN__=1 -D__T4__ -O2 -flto -mlittle-endian-data -mcpu=rx600 -m64bit-doubles \
+         -DMRB_USE_FLOAT -DMRB_FUNCALL_ARGC_MAX=6 -DMRB_HEAP_PAGE_SIZE=24 -DMRB_USE_IV_SEGLIST -DMRB_IVHASH_INIT_SIZE=3 -DKHASH_DEFAULT_SIZE=2 -DPOOL_PAGE_SIZE=256 # mruby/build_config.rbを参照のこと
 AFLAGS :=-Wall -I"$(GNU_PATH)rx-elf/include" -I. -I"$(GNU_PATH)lib/gcc/rx-elf/$(GCC_VERSION)/include" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/" -I"$(GNU_PATH)rx-elf/include/c++/$(GCC_VERSION)/rx-elf/64-bit-double/" -ffunction-sections -fno-function-cse -fsigned-char -fdata-sections -mno-balign -DTESTING=1 -DGRSAKURA -DARDUINO=100 -DCPPAPP -D__RX_LITTLE_ENDIAN__=1 -D__T4__ -O2 -flto -mlittle-endian-data -mcpu=rx600 -m64bit-doubles
 SFLAGS :=--gdwarf2
 CC  = rx-elf-gcc
