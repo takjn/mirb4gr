@@ -161,8 +161,9 @@ void loop() {
           last_code_line[char_index] = '\0';
           break;
         }
-        else if (incommingByte == 127) {
+        else if (incommingByte == 127 || incommingByte == 8) {
           // Backspace
+          Serial.print("\b");
     			char_index--;
     			if (char_index < 0) {
             char_index = 0;
