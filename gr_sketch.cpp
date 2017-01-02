@@ -101,8 +101,10 @@ print_cmdline(int code_block_open)
 }
 #endif
 
+char ruby_code[4096] = { 0 };
 char last_code_line[1024] = { 0 };
-char ruby_code[1024] = { 0 };
+int last_char;
+size_t char_index;
 mrbc_context *cxt;
 struct mrb_parser_state *parser;
 mrb_state *mrb;
@@ -112,9 +114,6 @@ int i;
 mrb_bool code_block_open = FALSE;
 int ai;
 unsigned int stack_keep = 0;
-
-byte incommingByte;
-int char_index;
 
 void setup() {
   pinMode(PIN_LED0, OUTPUT);
@@ -144,40 +143,60 @@ void setup() {
 
   ai = mrb_gc_arena_save(mrb);
 
-  print_cmdline(code_block_open);
+}
+
+static char
+getchar_from_serial(void)
+{
+  int key;
+
+  while (true) {
+    if (Serial.available() > 0) {
+      key = Serial.read();
+      DEBUG_PRINT("Serial.read", key);
+
+      // Backspace (temporary code)
+      if (key == 127 || key == 8) {
+    		if (char_index > 0) {
+          char_index--;
+          Serial.print("\b");
+          Serial.print(" ");
+          Serial.print("\b");
+        }
+        continue;
+    	}
+
+      break;
+    }
+  }
+
+  if (key == 13) {
+    Serial.write('\r');
+    key = '\n';
+  }
+
+  Serial.write(key);
+  return key;
 }
 
 void loop() {
-  if (Serial.available() > 0) {
+  while (TRUE) {
+    print_cmdline(code_block_open);
 
     char_index = 0;
-    while (true) {
-      if (Serial.available() > 0) {
-        incommingByte = Serial.read();
-        DEBUG_PRINT("Serial.read", incommingByte);
-
-        if (incommingByte == 13) {
-          // New Line
-          last_code_line[char_index] = '\0';
-          break;
-        }
-        else if (incommingByte == 127 || incommingByte == 8) {
-          // Backspace
-    			char_index--;
-    			if (char_index < 0) {
-            char_index = 0;
-          } else {
-            Serial.print("\b");
-          }
-    		}
-        else {
-          last_code_line[char_index++] = incommingByte;
-          Serial.write(incommingByte);
-        }
+    while ((last_char = getchar_from_serial()) != '\n') {
+      if (last_char == EOF) break;
+      if (char_index > sizeof(last_code_line)-2) {
+        Serial.println("input string too long");
+        continue;
       }
+      last_code_line[char_index++] = last_char;
     }
-    Serial.println("");
-    Serial.flush();
+
+    last_code_line[char_index++] = '\n';
+    last_code_line[char_index] = '\0';
+
+done:
 
     strcpy(ruby_code, last_code_line);
 
@@ -233,6 +252,5 @@ void loop() {
 
     mrb_parser_free(parser);
     mrb_full_gc(mrb);
-    print_cmdline(code_block_open);
   }
 }
