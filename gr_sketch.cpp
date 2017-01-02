@@ -84,7 +84,7 @@ my_puts(mrb_state *mrb, mrb_value self)
 static void
 print_hint(void)
 {
-  Serial.println("gr-mirb - Embeddable Interactive Ruby Shell for Gadget Renesas");
+  Serial.println("mirb4gr - Embeddable Interactive Ruby Shell for Gadget Renesas");
 }
 
 #ifndef ENABLE_READLINE
