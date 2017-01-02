@@ -1,3 +1,5 @@
+#include "rx63n/reboot.h"
+
 #include "Arduino.h"
 #include "mruby.h"
 #include "mruby/compile.h"
@@ -101,6 +103,31 @@ print_cmdline(int code_block_open)
 }
 #endif
 
+void mrb_codedump_all(mrb_state*, struct RProc*);
+
+static int
+check_keyword(const char *buf, const char *word)
+{
+  const char *p = buf;
+  size_t len = strlen(word);
+
+  /* skip preceding spaces */
+  while (*p && isspace((unsigned char)*p)) {
+    p++;
+  }
+  /* check keyword */
+  if (strncmp(p, word, len) != 0) {
+    return 0;
+  }
+  p += len;
+  /* skip trailing spaces */
+  while (*p) {
+    if (!isspace((unsigned char)*p)) return 0;
+    p++;
+  }
+  return 1;
+}
+
 char ruby_code[4096] = { 0 };
 char last_code_line[1024] = { 0 };
 int last_char;
@@ -198,7 +225,19 @@ void loop() {
 
 done:
 
-    strcpy(ruby_code, last_code_line);
+    if (code_block_open) {
+      if (strlen(ruby_code)+strlen(last_code_line) > sizeof(ruby_code)-1) {
+        Serial.println("concatenated input string too long");
+        continue;
+      }
+      strcat(ruby_code, last_code_line);
+    }
+    else {
+      if (check_keyword(last_code_line, "quit") || check_keyword(last_code_line, "exit")) {
+        break;
+      }
+      strcpy(ruby_code, last_code_line);
+    }
 
     /* parse code */
     parser = mrb_parser_new(mrb);
@@ -253,4 +292,9 @@ done:
     mrb_parser_free(parser);
     mrb_full_gc(mrb);
   }
+
+  mrbc_context_free(mrb, cxt);
+  mrb_close(mrb);
+
+  system_reboot(REBOOT_USERAPP);
 }
