@@ -4,12 +4,12 @@
 とりあえず、動くことは確認できた、というレベルです。
 
 ## 使い方
-gr-mirbフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
+mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
 ## ビルド方法
 ### リポジトリの取得
 ```
-git clone https://github.com/takjn/gr-mirb.git
+git clone https://github.com/takjn/mirb4gr.git
 git submodule init
 git submodule update
 ```
