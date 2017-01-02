@@ -208,6 +208,8 @@ getchar_from_serial(void)
 
 void loop() {
   while (TRUE) {
+    char *utf8;
+
     print_cmdline(code_block_open);
 
     char_index = 0;
@@ -239,16 +241,20 @@ done:
       strcpy(ruby_code, last_code_line);
     }
 
+    utf8 = mrb_utf8_from_locale(ruby_code, -1);
+    if (!utf8) abort();
+
     /* parse code */
     parser = mrb_parser_new(mrb);
     if (parser == NULL) {
       Serial.println("create parser state error");
       exit(EXIT_FAILURE);
     }
-    parser->s = ruby_code;
-    parser->send = ruby_code + strlen(ruby_code);
+    parser->s = utf8;
+    parser->send = utf8 + strlen(utf8);
     parser->lineno = 1;
     mrb_parser_parse(parser, cxt);
+    mrb_utf8_free(utf8);
 
     if (0 < parser->nerr) {
       /* syntax error */
