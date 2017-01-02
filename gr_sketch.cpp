@@ -248,7 +248,7 @@ done:
     parser = mrb_parser_new(mrb);
     if (parser == NULL) {
       Serial.println("create parser state error");
-      exit(EXIT_FAILURE);
+      break;
     }
     parser->s = utf8;
     parser->send = utf8 + strlen(utf8);
@@ -267,7 +267,7 @@ done:
       if (proc == NULL) {
         Serial.println("mrb_generate_code error");
         mrb_parser_free(parser);
-        exit(EXIT_FAILURE);
+        break;
       }
 
       /* pass a proc for evaluation */
