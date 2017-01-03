@@ -1,19 +1,28 @@
-#include "rx63n/reboot.h"
-
-#include "Arduino.h"
-#include "mruby.h"
-#include "mruby/compile.h"
-#include "mruby/proc.h"
-#include "mruby/string.h"
+/*
+** mirb - Embeddable Interactive Ruby Shell
+**
+** This program takes code from the user in
+** an interactive way and executes it
+** immediately. It's a REPL...
+*/
 
 // Define if you want to debug
 // #define DEBUG
 
 #ifdef DEBUG
-#  define DEBUG_PRINT(m,v)    { Serial.print("** "); Serial.print((m)); Serial.print(":"); Serial.println((v)); }
+#define DEBUG_PRINT(m,v)    { Serial.print("** "); Serial.print((m)); Serial.print(":"); Serial.println((v)); }
 #else
-#  define DEBUG_PRINT(m,v)    // do nothing
+#define DEBUG_PRINT(m,v)    // do nothing
 #endif
+
+#include "rx63n/reboot.h"
+#include "Arduino.h"
+
+#include <mruby.h>
+#include <mruby/array.h>
+#include <mruby/proc.h>
+#include <mruby/compile.h>
+#include <mruby/string.h>
 
 static void
 printstr(mrb_state *mrb, mrb_value obj, int new_line)
@@ -252,6 +261,7 @@ void setup() {
 
   Serial.begin(115200);
 
+  /* new interpreter instance */
   mrb = mrb_open();
   if (mrb == NULL) {
     Serial.println("Invalid mrb interpreter, exiting mirb");
@@ -381,7 +391,7 @@ done:
         /* generate bytecode */
         struct RProc *proc = mrb_generate_code(mrb, parser);
         if (proc == NULL) {
-          Serial.println("mrb_generate_code error");
+          Serial.println("codegen error");
           mrb_parser_free(parser);
           break;
         }
@@ -395,7 +405,6 @@ done:
         stack_keep = proc->body.irep->nlocals;
         /* did an exception occur? */
         if (mrb->exc) {
-          /* yes */
           p(mrb, mrb_obj_value(mrb->exc), 0);
           mrb->exc = 0;
         }

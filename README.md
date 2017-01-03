@@ -1,7 +1,8 @@
 # mirb for GR-CITRUS
-["Interactive Arduino Shell"](https://github.com/bovi/ias/)をGR-CITRUSに移植してみました。
+mirbをGR-CITRUSに移植してみました。
 
 とりあえず、動くことは確認できた、というレベルです。
+今後独自拡張を入れていく可能性があります。
 
 ## 使い方
 mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
@@ -43,4 +44,7 @@ make
 - カーソルキーを正しく処理する
 - backspaceキーを正しく処理する
 - GR-CITRUSのピン番号を定数として定義する
-- 本家mrubyのmirbをベースに書き直す
+- makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
+- Serialへの依存を分離する
+- 出力をOLEDやLCDにできるようにする
+- 入力をUSBキーボードからできるようにする
