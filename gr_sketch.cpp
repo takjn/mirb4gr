@@ -256,9 +256,6 @@ int ai;
 unsigned int stack_keep = 0;
 
 void setup() {
-  pinMode(PIN_LED0, OUTPUT);
-  digitalWrite(PIN_LED0, LOW);
-
   Serial.begin(115200);
 
   /* new interpreter instance */
