@@ -241,6 +241,17 @@ check_keyword(const char *buf, const char *word)
   return 1;
 }
 
+bool input_canceled = 0;
+bool
+char_handler(char chr)
+{
+  if (chr == 3) {
+    input_canceled = 1;
+    return 1;
+  }
+  return 0;
+}
+
 char ruby_code[4096] = { 0 };
 char last_code_line[1024] = { 0 };
 int last_char;
@@ -326,11 +337,24 @@ void loop() {
     char_index = 0;
     while ((last_char = getchar_from_serial()) != '\n') {
       if (last_char == EOF) break;
+      if (char_handler(last_char)) break;
       if (char_index > sizeof(last_code_line)-2) {
         Serial.println("input string too long");
         continue;
       }
       last_code_line[char_index++] = last_char;
+    }
+    if (input_canceled) {
+      ruby_code[0] = '\0';
+      last_code_line[0] = '\0';
+      code_block_open = FALSE;
+      Serial.println("^C");
+      input_canceled = 0;
+      continue;
+    }
+    if (last_char == EOF) {
+      Serial.println("");
+      break;
     }
 
     last_code_line[char_index++] = '\n';
