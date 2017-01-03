@@ -82,6 +82,107 @@ my_puts(mrb_state *mrb, mrb_value self)
   return argv;
 }
 
+/* Guess if the user might want to enter more
+ * or if he wants an evaluation of his code now */
+static mrb_bool
+is_code_block_open(struct mrb_parser_state *parser)
+{
+  mrb_bool code_block_open = FALSE;
+
+  /* check for heredoc */
+  if (parser->parsing_heredoc != NULL) return TRUE;
+  if (parser->heredoc_end_now) {
+    parser->heredoc_end_now = FALSE;
+    return FALSE;
+  }
+
+  /* check for unterminated string */
+  if (parser->lex_strterm) return TRUE;
+
+  /* check if parser error are available */
+  if (0 < parser->nerr) {
+    const char unexpected_end[] = "syntax error, unexpected $end";
+    const char *message = parser->error_buffer[0].message;
+
+    /* a parser error occur, we have to check if */
+    /* we need to read one more line or if there is */
+    /* a different issue which we have to show to */
+    /* the user */
+
+    if (strncmp(message, unexpected_end, sizeof(unexpected_end) - 1) == 0) {
+      code_block_open = TRUE;
+    }
+    else if (strcmp(message, "syntax error, unexpected keyword_end") == 0) {
+      code_block_open = FALSE;
+    }
+    else if (strcmp(message, "syntax error, unexpected tREGEXP_BEG") == 0) {
+      code_block_open = FALSE;
+    }
+    return code_block_open;
+  }
+
+  switch (parser->lstate) {
+
+  /* all states which need more code */
+
+  case EXPR_BEG:
+    /* beginning of a statement, */
+    /* that means previous line ended */
+    code_block_open = FALSE;
+    break;
+  case EXPR_DOT:
+    /* a message dot was the last token, */
+    /* there has to come more */
+    code_block_open = TRUE;
+    break;
+  case EXPR_CLASS:
+    /* a class keyword is not enough! */
+    /* we need also a name of the class */
+    code_block_open = TRUE;
+    break;
+  case EXPR_FNAME:
+    /* a method name is necessary */
+    code_block_open = TRUE;
+    break;
+  case EXPR_VALUE:
+    /* if, elsif, etc. without condition */
+    code_block_open = TRUE;
+    break;
+
+  /* now all the states which are closed */
+
+  case EXPR_ARG:
+    /* an argument is the last token */
+    code_block_open = FALSE;
+    break;
+
+  /* all states which are unsure */
+
+  case EXPR_CMDARG:
+    break;
+  case EXPR_END:
+    /* an expression was ended */
+    break;
+  case EXPR_ENDARG:
+    /* closing parenthese */
+    break;
+  case EXPR_ENDFN:
+    /* definition end */
+    break;
+  case EXPR_MID:
+    /* jump keyword like break, return, ... */
+    break;
+  case EXPR_MAX_STATE:
+    /* don't know what to do with this token */
+    break;
+  default:
+    /* this state is unexpected! */
+    break;
+  }
+
+  return code_block_open;
+}
+
 /* Print a short remark for the user */
 static void
 print_hint(void)
@@ -260,50 +361,59 @@ done:
     }
     parser->s = utf8;
     parser->send = utf8 + strlen(utf8);
-    parser->lineno = 1;
+    parser->lineno = cxt->lineno;
     mrb_parser_parse(parser, cxt);
+    code_block_open = is_code_block_open(parser);
     mrb_utf8_free(utf8);
 
-    if (0 < parser->nerr) {
-      /* syntax error */
-      Serial.write("Syntax Error: ");
-      Serial.println(parser->error_buffer[0].message);
+    if (code_block_open) {
+      /* no evaluation of code */
     }
     else {
-      /* generate bytecode */
-      struct RProc *proc = mrb_generate_code(mrb, parser);
-      if (proc == NULL) {
-        Serial.println("mrb_generate_code error");
-        mrb_parser_free(parser);
-        break;
-      }
-
-      /* pass a proc for evaluation */
-      /* evaluate the bytecode */
-      result = mrb_vm_run(mrb,
-          proc,
-          mrb_top_self(mrb),
-          stack_keep);
-      stack_keep = proc->body.irep->nlocals;
-      /* did an exception occur? */
-      if (mrb->exc) {
-        /* yes */
-        p(mrb, mrb_obj_value(mrb->exc), 0);
-        mrb->exc = 0;
+      if (0 < parser->nerr) {
+        /* syntax error */
+        Serial.print("line ");
+        Serial.print(parser->error_buffer[0].lineno);
+        Serial.print(": ");
+        Serial.println(parser->error_buffer[0].message);
       }
       else {
-        /* no */
-        if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
-          result = mrb_any_to_s(mrb, result);
+        /* generate bytecode */
+        struct RProc *proc = mrb_generate_code(mrb, parser);
+        if (proc == NULL) {
+          Serial.println("mrb_generate_code error");
+          mrb_parser_free(parser);
+          break;
         }
-        p(mrb, result, 1);
-      }
-    }
-    ruby_code[0] = '\0';
-    last_code_line[0] = '\0';
-    mrb_gc_arena_restore(mrb, ai);
 
+        /* pass a proc for evaluation */
+        /* evaluate the bytecode */
+        result = mrb_vm_run(mrb,
+            proc,
+            mrb_top_self(mrb),
+            stack_keep);
+        stack_keep = proc->body.irep->nlocals;
+        /* did an exception occur? */
+        if (mrb->exc) {
+          /* yes */
+          p(mrb, mrb_obj_value(mrb->exc), 0);
+          mrb->exc = 0;
+        }
+        else {
+          /* no */
+          if (!mrb_respond_to(mrb, result, mrb_intern_lit(mrb, "inspect"))){
+            result = mrb_any_to_s(mrb, result);
+          }
+          p(mrb, result, 1);
+        }
+      }
+      ruby_code[0] = '\0';
+      last_code_line[0] = '\0';
+      mrb_gc_arena_restore(mrb, ai);
+    }
     mrb_parser_free(parser);
+    cxt->lineno++;
+
     mrb_full_gc(mrb);
   }
 

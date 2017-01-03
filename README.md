@@ -43,5 +43,4 @@ make
 - カーソルキーを正しく処理する
 - backspaceキーを正しく処理する
 - GR-CITRUSのピン番号を定数として定義する
-- code blockに対応する
 - 本家mrubyのmirbをベースに書き直す
