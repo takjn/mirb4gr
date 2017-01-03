@@ -87,6 +87,9 @@ static void
 print_hint(void)
 {
   Serial.println("mirb4gr - Embeddable Interactive Ruby Shell for Gadget Renesas");
+  Serial.println("  commands:");
+  Serial.println("  quit, exit    system reboot");
+  Serial.println("  help          show this screen");
 }
 
 #ifndef ENABLE_READLINE
@@ -238,6 +241,11 @@ done:
       if (check_keyword(last_code_line, "quit") || check_keyword(last_code_line, "exit")) {
         break;
       }
+      else if (check_keyword(last_code_line, "help")) {
+        print_hint();
+        continue;
+      }
+
       strcpy(ruby_code, last_code_line);
     }
 
