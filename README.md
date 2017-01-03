@@ -5,7 +5,8 @@ mirbをGR-CITRUSに移植してみました。
 今後独自拡張を入れていく可能性があります。
 
 ## 使い方
-mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
+* mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
+* ターミナルソフトからGR-CITRUSに接続してください。通信速度は115200bpsです。
 
 ## ビルド方法
 ### リポジトリの取得

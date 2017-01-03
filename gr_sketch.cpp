@@ -46,7 +46,7 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
   val = mrb_funcall(mrb, obj, "inspect", 0);
   if (prompt) {
     if (!mrb->exc) {
-      printf(" => ");
+      Serial.print(" => ");
     }
     else {
       val = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
