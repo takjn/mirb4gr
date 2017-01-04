@@ -61,7 +61,6 @@ make
 - カーソルキーを正しく処理する
 - backspaceキーを正しく処理する
 - GR-CITRUSのピン番号を定数として定義する
-- mruby/build/RX630/lib/libmruby.flag.makを見るようにする
 - makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
 - Serialへの依存を分離する
 - 出力をOLEDやLCDにできるようにする
