@@ -40,11 +40,28 @@ make
 - gr-mirbフォルダに戻り、makefileの``GNU_PATH``を適切に修正してからmakeしてください。
 - 出来上がったcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
+## Sample
+```
+> class GR_CITRUS include Arduino
+*       def run
+*               10.times do
+*                       digitalWrite(61, HIGH)
+*                       delay 1000
+*                       digitalWrite(61, LOW)
+*                       delay 1000
+*               end
+*       end
+* end
+ => :run
+> GR_CITRUS.new.run
+```
+
 ## TODO
 - line inputの関数を実装する
 - カーソルキーを正しく処理する
 - backspaceキーを正しく処理する
 - GR-CITRUSのピン番号を定数として定義する
+- mruby/build/RX630/lib/libmruby.flag.makを見るようにする
 - makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
 - Serialへの依存を分離する
 - 出力をOLEDやLCDにできるようにする
