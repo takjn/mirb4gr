@@ -9,6 +9,10 @@ mirbをGR-CITRUSに移植してみました。
 * ターミナルソフトからGR-CITRUSに接続してください。通信速度は115200bpsです。
 
 ## ビルド方法
+### ビルド環境
+GNURX_v14.03が必要です。
+[GR-CITRUSに組み込むmrubyをビルドする方法 for Windows](http://qiita.com/takjn/items/42fa8ad0c61a8840a9c2)や、Linuxの場合は[こちら](http://japan.renesasrulz.com/gr_user_forum_japanese/f/gr-citrus/3447/x64-ubuntu)などを参考にセットアップしてください。
+
 ### リポジトリの取得
 ```
 git clone https://github.com/takjn/mirb4gr.git
@@ -62,6 +66,7 @@ make
 - backspaceキーを正しく処理する
 - GR-CITRUSのピン番号を定数として定義する
 - makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
+- $MRUBY_CONFIG環境変数を使って、build_configを上書きしなくても良いようにする
 - Serialへの依存を分離する
 - 出力をOLEDやLCDにできるようにする
 - 入力をUSBキーボードからできるようにする
