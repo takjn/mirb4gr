@@ -266,7 +266,8 @@ mrb_bool code_block_open = FALSE;
 int ai;
 unsigned int stack_keep = 0;
 
-void setup() {
+void
+setup() {
   Serial.begin(115200);
 
   /* new interpreter instance */
@@ -328,7 +329,8 @@ getchar_from_serial(void)
   return key;
 }
 
-void loop() {
+void
+loop() {
   while (TRUE) {
     char *utf8;
 
