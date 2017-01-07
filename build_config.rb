@@ -106,7 +106,7 @@ MRuby::CrossBuild.new("RX630") do |conf|
 
   #Arduino API
   GR_MRUBY_FIRMWARE_PATH = '..'
-  conf.gem '../mruby-arduino' do |g|
+  conf.gem :github => "takjn/mruby-arduino", :branch => "master" do |g|
     g.cc.flags << " -DGRSAKURA -DARDUINO=100 "
     g.cc.include_paths << ["#{GR_MRUBY_FIRMWARE_PATH}/gr_common/lib/", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common/core" ]
     g.cxx.flags = g.cc.flags.dup
