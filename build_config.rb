@@ -112,4 +112,8 @@ MRuby::CrossBuild.new("RX630") do |conf|
     g.cxx.flags = g.cc.flags.dup
     g.cxx.include_paths = g.cc.include_paths.dup
   end
+
+  #Extention libraries for Gadget Renesas
+  conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
+
 end

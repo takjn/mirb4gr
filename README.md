@@ -46,12 +46,14 @@ make
 
 ## Sample
 ```
-> class GR_CITRUS include Arduino
+> class GR_CITRUS
+*       include Arduino
+*       include PinsArduino
 *       def run
 *               10.times do
-*                       digitalWrite(61, HIGH)
+*                       digitalWrite(PIN_LED0, HIGH)
 *                       delay 1000
-*                       digitalWrite(61, LOW)
+*                       digitalWrite(PIN_LED0, LOW)
 *                       delay 1000
 *               end
 *       end
@@ -64,7 +66,6 @@ make
 - line inputの関数を実装する
 - カーソルキーを正しく処理する
 - backspaceキーを正しく処理する
-- GR-CITRUSのピン番号を定数として定義する
 - makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
 - $MRUBY_CONFIG環境変数を使って、build_configを上書きしなくても良いようにする
 - Serialへの依存を分離する
