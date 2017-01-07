@@ -1,6 +1,3 @@
 [submodule "mruby"]
 	path = mruby
 	url = https://github.com/mruby/mruby.git
-[submodule "mruby-arduino"]
-	path = mruby-arduino
-	url = https://github.com/takjn/mruby-arduino.git
