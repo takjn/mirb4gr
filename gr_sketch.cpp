@@ -315,6 +315,14 @@ getchar_from_serial(void)
         }
         continue;
     	}
+      // Cursor (temporary code)
+      if (key == 27) {
+        // temporarily, negrect cursor key
+        while (Serial.available() > 0) {
+          key = Serial.read();
+        }
+        continue;
+      }
 
       break;
     }
