@@ -24,6 +24,12 @@
 #include <mruby/compile.h>
 #include <mruby/string.h>
 
+/* use Serial instead of stdout */
+#define stdout_putc(c)           { Serial.write(c); }
+#define stdout_write(s, len)     { Serial.write(s, len); }
+#define stdout_print(s)          { Serial.print(s); }
+#define stdout_println(s)        { Serial.println(s); }
+
 static void
 p(mrb_state *mrb, mrb_value obj, int prompt)
 {
@@ -32,7 +38,7 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
   val = mrb_funcall(mrb, obj, "inspect", 0);
   if (prompt) {
     if (!mrb->exc) {
-      Serial.print(" => ");
+      stdout_print(" => ");
     }
     else {
       val = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
@@ -41,8 +47,8 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
   if (!mrb_string_p(val)) {
     val = mrb_obj_as_string(mrb, obj);
   }
-  Serial.write(RSTRING_PTR(val), RSTRING_LEN(val));
-  Serial.println("");
+  stdout_write(RSTRING_PTR(val), RSTRING_LEN(val));
+  stdout_println("");
 }
 
 /* Guess if the user might want to enter more
@@ -150,10 +156,10 @@ is_code_block_open(struct mrb_parser_state *parser)
 static void
 print_hint(void)
 {
-  Serial.println("mirb4gr - Embeddable Interactive Ruby Shell for Gadget Renesas");
-  Serial.println("  commands:");
-  Serial.println("  quit, exit    system reboot");
-  Serial.println("  help          show this screen");
+  stdout_println("mirb4gr - Embeddable Interactive Ruby Shell for Gadget Renesas");
+  stdout_println("  commands:");
+  stdout_println("  quit, exit    system reboot");
+  stdout_println("  help          show this screen");
 }
 
 #ifndef ENABLE_READLINE
@@ -162,10 +168,10 @@ static void
 print_cmdline(int code_block_open)
 {
   if (code_block_open) {
-    Serial.print("* ");
+    stdout_print("* ");
   }
   else {
-    Serial.print("> ");
+    stdout_print("> ");
   }
 }
 #endif
@@ -227,7 +233,7 @@ setup() {
   /* new interpreter instance */
   mrb = mrb_open();
   if (mrb == NULL) {
-    Serial.println("Invalid mrb interpreter, exiting mirb");
+    stdout_println("Invalid mrb interpreter, exiting mirb");
     exit(EXIT_FAILURE);
   }
 
@@ -256,9 +262,9 @@ getchar_from_serial(void)
       if (key == 127 || key == 8) {
     		if (char_index > 0) {
           char_index--;
-          Serial.print("\b");
-          Serial.print(" ");
-          Serial.print("\b");
+          stdout_print("\b");
+          stdout_print(" ");
+          stdout_print("\b");
         }
         continue;
     	}
@@ -276,11 +282,11 @@ getchar_from_serial(void)
   }
 
   if (key == 13) {
-    Serial.write('\r');
+    stdout_putc('\r');
     key = '\n';
   }
 
-  Serial.write(key);
+  stdout_putc(key);
   return key;
 }
 
@@ -296,7 +302,7 @@ loop() {
       if (last_char == EOF) break;
       if (char_handler(last_char)) break;
       if (char_index > sizeof(last_code_line)-2) {
-        Serial.println("input string too long");
+        stdout_println("input string too long");
         continue;
       }
       last_code_line[char_index++] = last_char;
@@ -305,12 +311,12 @@ loop() {
       ruby_code[0] = '\0';
       last_code_line[0] = '\0';
       code_block_open = FALSE;
-      Serial.println("^C");
+      stdout_println("^C");
       input_canceled = 0;
       continue;
     }
     if (last_char == EOF) {
-      Serial.println("");
+      stdout_println("");
       break;
     }
 
@@ -321,7 +327,7 @@ done:
 
     if (code_block_open) {
       if (strlen(ruby_code)+strlen(last_code_line) > sizeof(ruby_code)-1) {
-        Serial.println("concatenated input string too long");
+        stdout_println("concatenated input string too long");
         continue;
       }
       strcat(ruby_code, last_code_line);
@@ -344,7 +350,7 @@ done:
     /* parse code */
     parser = mrb_parser_new(mrb);
     if (parser == NULL) {
-      Serial.println("create parser state error");
+      stdout_println("create parser state error");
       break;
     }
     parser->s = utf8;
@@ -360,16 +366,16 @@ done:
     else {
       if (0 < parser->nerr) {
         /* syntax error */
-        Serial.print("line ");
-        Serial.print(parser->error_buffer[0].lineno);
-        Serial.print(": ");
-        Serial.println(parser->error_buffer[0].message);
+        stdout_print("line ");
+        stdout_print(parser->error_buffer[0].lineno);
+        stdout_print(": ");
+        stdout_println(parser->error_buffer[0].message);
       }
       else {
         /* generate bytecode */
         struct RProc *proc = mrb_generate_code(mrb, parser);
         if (proc == NULL) {
-          Serial.println("codegen error");
+          stdout_println("codegen error");
           mrb_parser_free(parser);
           break;
         }
