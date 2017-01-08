@@ -104,24 +104,20 @@ MRuby::CrossBuild.new("RX630") do |conf|
   #light-weight regular expression
   #conf.gem :github => "masamitsu-murase/mruby-hs-regexp", :branch => "master"
 
-  #Arduino API
-  GR_MRUBY_FIRMWARE_PATH = '..'
-  conf.gem :github => "takjn/mruby-arduino", :branch => "master" do |g|
-    g.cc.flags << " -DGRSAKURA -DARDUINO=100 "
-    g.cc.include_paths << ["#{GR_MRUBY_FIRMWARE_PATH}/gr_common/lib/", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common/core" ]
-    g.cxx.flags = g.cc.flags.dup
-    g.cxx.include_paths = g.cc.include_paths.dup
-  end
+
+  # additional configrations for Arduino API
+  conf.cc.flags << " -DGRSAKURA -DARDUINO=100 "
+  conf.cc.include_paths << ["../gr_common/lib/", "../gr_common", "../gr_common/core" ]
+  conf.cxx.flags = conf.cc.flags.dup
+  conf.cxx.include_paths = conf.cc.include_paths.dup
+
+  # Arduino API
+  conf.gem :github => "takjn/mruby-arduino", :branch => "master"
 
   # standard print/puts/p for mruby-arduino environments
-  conf.gem :github => "takjn/mruby-arduino-print", :branch => "master" do |g|
-    g.cc.flags << " -DGRSAKURA -DARDUINO=100 "
-    g.cc.include_paths << ["#{GR_MRUBY_FIRMWARE_PATH}/gr_common/lib/", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common/core" ]
-    g.cxx.flags = g.cc.flags.dup
-    g.cxx.include_paths = g.cc.include_paths.dup
-  end
+  conf.gem :github => "takjn/mruby-arduino-print", :branch => "master"
 
-  #Extention libraries for Gadget Renesas
+  # Extention libraries for Gadget Renesas
   conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
 end
