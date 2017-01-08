@@ -69,7 +69,6 @@ make
 - Tabキーを正しく処理する
 - backspaceキーを正しく処理する
 - deleteキーを正しく処理する
-- makeコマンドでmrubyのビルドからcitrus_sketch.binのビルドまでできるようにする
 - $MRUBY_CONFIG環境変数を使って、build_configを上書きしなくても良いようにする
 - Serialへの依存を分離する
 - 出力をOLEDやLCDにできるようにする
