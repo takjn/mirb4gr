@@ -25,20 +25,6 @@
 #include <mruby/string.h>
 
 static void
-printstr(mrb_state *mrb, mrb_value obj, int new_line)
-{
-  mrb_value str;
-
-  str = mrb_funcall(mrb, obj, "to_s", 0);
-  Serial.write(RSTRING_PTR(str), RSTRING_LEN(str));
-  if (new_line)
-  {
-    Serial.println("");
-  }
-}
-
-/* Redirecting #p to Serial */
-static void
 p(mrb_state *mrb, mrb_value obj, int prompt)
 {
   mrb_value val;
@@ -55,40 +41,8 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
   if (!mrb_string_p(val)) {
     val = mrb_obj_as_string(mrb, obj);
   }
-  printstr(mrb, val, 1);
-}
-
-mrb_value
-my_p(mrb_state *mrb, mrb_value self)
-{
-  mrb_value argv;
-
-  mrb_get_args(mrb, "o", &argv);
-  p(mrb, argv, 0);
-
-  return argv;
-}
-
-mrb_value
-my_print(mrb_state *mrb, mrb_value self)
-{
-  mrb_value argv;
-
-  mrb_get_args(mrb, "o", &argv);
-  printstr(mrb, argv, 0);
-
-  return argv;
-}
-
-mrb_value
-my_puts(mrb_state *mrb, mrb_value self)
-{
-  mrb_value argv;
-
-  mrb_get_args(mrb, "o", &argv);
-  printstr(mrb, argv, 1);
-
-  return argv;
+  Serial.write(RSTRING_PTR(val), RSTRING_LEN(val));
+  Serial.println("");
 }
 
 /* Guess if the user might want to enter more
@@ -276,13 +230,6 @@ setup() {
     Serial.println("Invalid mrb interpreter, exiting mirb");
     exit(EXIT_FAILURE);
   }
-
-  // Redirecting stdout to Serial
-  struct RClass *krn;
-  krn = mrb->kernel_module;
-  mrb_define_method(mrb, krn, "p", my_p, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, krn, "print", my_print, MRB_ARGS_REQ(1));
-  mrb_define_method(mrb, krn, "puts", my_puts, MRB_ARGS_REQ(1));
 
   print_hint();
 

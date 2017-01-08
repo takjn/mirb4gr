@@ -113,6 +113,14 @@ MRuby::CrossBuild.new("RX630") do |conf|
     g.cxx.include_paths = g.cc.include_paths.dup
   end
 
+  # standard print/puts/p for mruby-arduino environments
+  conf.gem :github => "takjn/mruby-arduino-print", :branch => "master" do |g|
+    g.cc.flags << " -DGRSAKURA -DARDUINO=100 "
+    g.cc.include_paths << ["#{GR_MRUBY_FIRMWARE_PATH}/gr_common/lib/", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common", "#{GR_MRUBY_FIRMWARE_PATH}/gr_common/core" ]
+    g.cxx.flags = g.cc.flags.dup
+    g.cxx.include_paths = g.cc.include_paths.dup
+  end
+
   #Extention libraries for Gadget Renesas
   conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
