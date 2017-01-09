@@ -45,6 +45,33 @@ make
 - 出来上がったcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
 ## Sample
+LEDをOn、Off
+```
+> extend Arduino      # load "mruby-arduino" module
+ => main
+> digitalWrite(61, 1) # LED On  (61 = Built-in LED on GR-CITRUS)
+ => nil
+> digitalWrite(61, 0) # LED Off
+ => nil
+```
+
+メソッドを定義してLEDをチカチカ
+```
+> extend Arduino
+ => main
+> def blink
+*       10.times do
+*               digitalWrite(61, 1)
+*               delay 1000
+*               digitalWrite(61, 0)
+*               delay 1000
+*       end
+* end
+ => :blink
+> blink
+```
+
+クラスを定義してLEDをチカチカ
 ```
 > class GR_CITRUS
 *       include Arduino
