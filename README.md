@@ -15,6 +15,7 @@ GNURX_v14.03が必要です。
 ### リポジトリの取得
 ```
 git clone https://github.com/takjn/mirb4gr.git
+cd mirb4gr
 git submodule init
 git submodule update
 ```
@@ -28,6 +29,14 @@ cd mruby
 make
 ```
 
+上書きコピーをせずにbuild_configを`MRUBY_CONFIG`環境変数で指定することもできます。
+{path_to}には、mirb4grフォルダまでのパスを指定してください。
+```
+export MRUBY_CONFIG=/{path_to}/mirb4gr/build_config.rb
+cd mruby
+make
+```
+
 以下のようなメッセージが出力されていれば成功です。
 
 ```
@@ -36,11 +45,14 @@ make
  Output Directory: build/RX630
     Included Gems:
              mruby-compiler - mruby compiler library
+             mruby-arduino - Arduino API
+             mruby-print - standard print/puts/p for mruby-arduino environments
+             mruby-gr-citrus - Extention libraries for GR-CITRUS
 ================================================
 ```
 
 ### citrus_sketch.binのmake
-- gr-mirbフォルダに戻り、makefileの``GNU_PATH``を適切に修正してからmakeしてください。
+- mirb4grフォルダに戻り、makefileの``GNU_PATH``を適切に修正してからmakeしてください。
 - 出来上がったcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
 ## Sample
