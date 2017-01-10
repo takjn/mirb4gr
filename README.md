@@ -1,8 +1,7 @@
 # mirb for GR-CITRUS
 mirbをGR-CITRUSに移植してみました。
 
-とりあえず、動くことは確認できた、というレベルです。
-今後独自拡張を入れていく可能性があります。
+とりあえず、動くことは確認できた、というレベルです。今後独自拡張を入れていく可能性があります。
 
 ## 使い方
 * mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
@@ -45,7 +44,7 @@ make
 - 出来上がったcitrus_sketch.binをGR-CITRUSに書き込んでください。
 
 ## Sample
-LEDをOn、Off
+手動でLEDをOn、Offします。
 ```
 > extend Arduino      # load "mruby-arduino" module
  => main
@@ -55,7 +54,7 @@ LEDをOn、Off
  => nil
 ```
 
-メソッドを定義してLEDをチカチカ
+メソッドを定義してLEDを点滅させます。
 ```
 > extend Arduino
  => main
@@ -71,7 +70,7 @@ LEDをOn、Off
 > blink
 ```
 
-クラスを定義してLEDをチカチカ
+クラスを定義してLEDを点滅させます。
 ```
 > class GR_CITRUS
 *       include Arduino
@@ -88,3 +87,6 @@ LEDをOn、Off
  => :run
 > GR_CITRUS.new.run
 ```
+
+## 実装の方向性
+mirb自体は、本家mrubyのmirbを忠実に移植したいと考えています。他のボードへの移植性を高めるため、Gadget RenesasやGR-CITRUS向けの機能拡張は、mrbgemsで行います。
