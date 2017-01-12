@@ -10,7 +10,7 @@ mirbをGR-CITRUSに移植してみました。
 ## ビルド方法
 ### ビルド環境
 GNURX_v14.03が必要です。
-[GR-CITRUSに組み込むmrubyをビルドする方法 for Windows](http://qiita.com/takjn/items/42fa8ad0c61a8840a9c2)や、Linuxの場合は[こちら](http://japan.renesasrulz.com/gr_user_forum_japanese/f/gr-citrus/3447/x64-ubuntu)などを参考にセットアップしてください。
+Windowsの方は、[GR-CITRUSに組み込むmrubyをビルドする方法 for Windows](http://qiita.com/takjn/items/42fa8ad0c61a8840a9c2)や、macOSの方は、[GR-CITRUSに組み込むmrubyをビルドする方法 for macOS](http://qiita.com/takjn/items/0ef3d46107ac8faaf621)、Linuxの場合は[こちら](http://japan.renesasrulz.com/gr_user_forum_japanese/f/gr-citrus/3447/x64-ubuntu)などを参考にセットアップしてください。
 
 ### リポジトリの取得
 ```
@@ -21,7 +21,8 @@ git submodule update
 ```
 
 ### RX630用libmruby.aのビルド
-build_configをmrubyに上書きコピーして、mrubyをmakeします。
+build_configをmrubyに上書きコピーしてください。bury_config内の`BIN_PATH`を環境に合わせて適切に設定してください。
+その後、mrubyをmakeしてください。
 
 ```
 cp build_config.rb mruby/build_config.rb
