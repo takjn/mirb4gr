@@ -107,7 +107,7 @@ MRuby::CrossBuild.new("RX630") do |conf|
 
   # additional configrations for Arduino API
   conf.cc.flags << " -DGRSAKURA -DARDUINO=100 "
-  conf.cc.include_paths << ["../gr_common/lib/", "../gr_common", "../gr_common/core", "../gr_common/lib/SPI", "../gr_common/lib/Wire", "../gr_common/lib/Servo" ]
+  conf.cc.include_paths << ["../gr_common/lib/", "../gr_common", "../gr_common/core","../gr_common/rx63n", "../gr_common/lib/SPI", "../gr_common/lib/Wire", "../gr_common/lib/Servo", "../gr_common/lib/SD" ]
   conf.cxx.flags = conf.cc.flags.dup
   conf.cxx.include_paths = conf.cc.include_paths.dup
 
@@ -120,10 +120,13 @@ MRuby::CrossBuild.new("RX630") do |conf|
   # Extention libraries for Gadget Renesas
   conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
-  # SSD1306 library for mruby-arduino environment
-  conf.gem :github => "takjn/mruby-arduino-ssd1306", :branch => "master"
+  # # SSD1306 library for mruby-arduino environment
+  # conf.gem :github => "takjn/mruby-arduino-ssd1306", :branch => "master"
 
-  # NeoPixel library for mruby-arduino environment
-  conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
+  # # NeoPixel library for mruby-arduino environment
+  # conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
+
+  # # WavMp3p library for mruby-arduino environment.
+  # conf.gem :github => "takjn/mruby-gr-wavmp3p", :branch => "master"
 
 end
