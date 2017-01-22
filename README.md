@@ -1,11 +1,10 @@
 # mirb for GR-CITRUS
 mirbをGR-CITRUSに移植してみました。
 
-とりあえず、動くことは確認できた、というレベルです。今後独自拡張を入れていく可能性があります。
-
 ## 使い方
 * mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
 * ターミナルソフトからGR-CITRUSに接続してください。通信速度は115200bpsです。
+* OSやターミナルソフトによっては、起動メッセージが表示されないことがあります。エンターキーを押してプロンプトを表示してください。
 
 ## ビルド方法
 ### ビルド環境
@@ -21,7 +20,7 @@ git submodule update
 ```
 
 ### RX630用libmruby.aのビルド
-build_configをmrubyに上書きコピーしてください。bury_config内の`BIN_PATH`を環境に合わせて適切に設定してください。
+build_configをmrubyに上書きコピーしてください。build_config内の`BIN_PATH`を環境に合わせて適切に設定してください。
 その後、mrubyをmakeしてください。
 
 ```
