@@ -62,6 +62,3 @@ core: lib
 
 lib: $(AOBJS) $(MAKEFILE)
 	$(AR) core.a $(AOBJS)
-
-clrsrc:
-	rm -f $(filter-out ./gr_sketch.cpp, $(SRCFILES))
