@@ -112,21 +112,21 @@ MRuby::CrossBuild.new("RX630") do |conf|
   conf.cxx.include_paths = conf.cc.include_paths.dup
 
   # Arduino API
-  conf.gem :github => "takjn/mruby-arduino", :branch => "master"
+  # conf.gem :github => "takjn/mruby-arduino", :branch => "master"
 
   # standard print/puts/p for mruby-arduino environments
-  conf.gem :github => "takjn/mruby-arduino-print", :branch => "master"
+  # conf.gem :github => "takjn/mruby-arduino-print", :branch => "master"
 
   # Extention libraries for Gadget Renesas
-  conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
+  # conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
-  # # SSD1306 library for mruby-arduino environment
+  # SSD1306 library for mruby-arduino environment
   # conf.gem :github => "takjn/mruby-arduino-ssd1306", :branch => "master"
 
-  # # NeoPixel library for mruby-arduino environment
+  # NeoPixel library for mruby-arduino environment
   # conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
 
-  # # WavMp3p library for mruby-arduino environment.
+  # WavMp3p library for mruby-arduino environment.
   # conf.gem :github => "takjn/mruby-gr-wavmp3p", :branch => "master"
 
 end

@@ -7,7 +7,7 @@
 */
 
 // Define serial port
-#define Serial Serial
+#define Serial Serial1
 
 // Define if you want standalone mode
 #define STANDALONE
@@ -31,6 +31,45 @@
 #include <mruby/string.h>
 
 #ifdef STANDALONE
+
+/* USB Host support */
+#include <hidboot.h>
+uint8_t last_key = 0;
+class KbdRptParser : public KeyboardReportParser {
+  protected:
+    void OnKeyDown(uint8_t mod, uint8_t key);
+};
+void KbdRptParser::OnKeyDown(uint8_t mod, uint8_t key)
+{
+  // Serial.print(key);
+  // WIP: temporarily code
+  if (key == 40) {
+    last_key = 13;  // Enter
+  }
+  else if (key == 42 || key == 76) {
+    last_key = 127;  // Backspace or Delete
+  }
+  else {
+    last_key = OemToAscii(mod, key);
+  }
+}
+
+USB Usb;
+HIDBoot<HID_PROTOCOL_KEYBOARD>    HidKeyboard(&Usb);
+KbdRptParser KbdPrs;
+
+void
+setup_keyboard(void)
+{
+  if (Usb.Init() == -1) {
+    Serial.println("OSC did not start.");
+  }
+
+  delay( 200 );
+
+  HidKeyboard.SetReportParser(0, (HIDReportParser*)&KbdPrs);
+}
+
 /* SSD1306Ascii - Text only Arduino Library for SSD1306 OLED displays */
 #define I2C_ADDRESS 0x3C
 #include <Wire.h>
@@ -269,6 +308,7 @@ setup() {
   while (!Serial);
 
 #ifdef STANDALONE
+  setup_keyboard();
   setup_display();
 #endif
 
@@ -296,6 +336,34 @@ getchar_from_serial(void)
   int key;
 
   while (true) {
+#ifdef STANDALONE
+
+#ifdef DEBUG
+    digitalWrite(PIN_LED0, HIGH);
+    delay(50);
+    digitalWrite(PIN_LED0, LOW);
+    delay(50);
+#endif
+
+    Usb.Task();
+
+    key = last_key;
+    if (key > 0) {
+      last_key = 0;
+
+      // Backspace (temporary code)
+      if (key == 127 || key == 8) {
+    		if (char_index > 0) {
+          char_index--;
+          Serial.print("\b \b");
+          handle_backspace();
+        }
+        continue;
+    	}
+      break;
+    }
+#endif
+
     if (Serial.available() > 0) {
       key = Serial.read();
       DEBUG_PRINT("Serial.read", key);
