@@ -7,13 +7,13 @@
 */
 
 // Define serial port
-#define _SERIAL Serial
+#define Serial Serial
 
 // Define if you want to debug
 // #define DEBUG
 
 #ifdef DEBUG
-#define DEBUG_PRINT(m,v)    { _SERIAL.print("** "); _SERIAL.print((m)); _SERIAL.print(":"); _SERIAL.println((v)); }
+#define DEBUG_PRINT(m,v)    { Serial.print("** "); Serial.print((m)); Serial.print(":"); Serial.println((v)); }
 #else
 #define DEBUG_PRINT(m,v)    // do nothing
 #endif
@@ -28,10 +28,10 @@
 #include <mruby/string.h>
 
 /* use Serial instead of stdout */
-#define stdout_putc(c)           { _SERIAL.write(c); }
-#define stdout_write(s, len)     { _SERIAL.write(s, len); }
-#define stdout_print(s)          { _SERIAL.print(s); }
-#define stdout_println(s)        { _SERIAL.println(s); }
+#define stdout_putc(c)           { Serial.write(c); }
+#define stdout_write(s, len)     { Serial.write(s, len); }
+#define stdout_print(s)          { Serial.print(s); }
+#define stdout_println(s)        { Serial.println(s); }
 
 static void
 p(mrb_state *mrb, mrb_value obj, int prompt)
@@ -231,7 +231,8 @@ unsigned int stack_keep = 0;
 
 void
 setup() {
-  _SERIAL.begin(115200);
+  Serial.begin(115200);
+  while (!Serial);
 
   /* new interpreter instance */
   mrb = mrb_open();
@@ -257,8 +258,8 @@ getchar_from_serial(void)
   int key;
 
   while (true) {
-    if (_SERIAL.available() > 0) {
-      key = _SERIAL.read();
+    if (Serial.available() > 0) {
+      key = Serial.read();
       DEBUG_PRINT("Serial.read", key);
 
       // Backspace (temporary code)
@@ -274,8 +275,8 @@ getchar_from_serial(void)
       // Cursor (temporary code)
       if (key == 27) {
         // temporarily, negrect cursor key
-        while (_SERIAL.available() > 0) {
-          key = _SERIAL.read();
+        while (Serial.available() > 0) {
+          key = Serial.read();
         }
         continue;
       }
