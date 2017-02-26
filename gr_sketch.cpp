@@ -6,9 +6,6 @@
 ** immediately. It's a REPL...
 */
 
-// Define serial port
-#define Serial Serial1
-
 // Define if you want standalone mode
 #define STANDALONE
 
@@ -30,6 +27,8 @@
 #include <mruby/string.h>
 
 #ifdef STANDALONE
+// Define serial port
+#define Serial Serial1
 
 /* USB Host support */
 #include <hidboot.h>
@@ -95,7 +94,7 @@ handle_backspace(void)
 
 /* use Serial instead of stdout */
 #define stdout_putc(c)           { Serial.write(c); oled.write(c); }
-#define stdout_write(s, len)     { Serial.write(s, len); for(int i=0;i<len;i++) oled.write(*(s+i)); }
+#define stdout_write(s, len)     { Serial.write(s, len); for(int i=0;i<len;i++) oled.write(s[i]); }
 #define stdout_print(s)          { Serial.print(s); oled.print(s); }
 #define stdout_println(s)        { Serial.println(s); oled.println(s); }
 #else
@@ -234,8 +233,8 @@ print_hint(void)
 {
   stdout_println("mirb4gr - Embeddable Interactive Ruby Shell for Gadget Renesas");
   stdout_println("  commands:");
-  stdout_println("  quit, exit    system reboot");
-  stdout_println("  help          show this screen");
+  stdout_println("  quit, exit  system reboot");
+  stdout_println("  help        show this screen");
 }
 
 #ifndef ENABLE_READLINE
