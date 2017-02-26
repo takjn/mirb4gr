@@ -25,7 +25,6 @@
 #include "Arduino.h"
 
 #include <mruby.h>
-#include <mruby/array.h>
 #include <mruby/proc.h>
 #include <mruby/compile.h>
 #include <mruby/string.h>
@@ -35,6 +34,7 @@
 /* USB Host support */
 #include <hidboot.h>
 uint8_t last_key = 0;
+uint8_t get_last_key() { uint8_t ret = last_key; last_key = 0; return ret; }
 class KbdRptParser : public KeyboardReportParser {
   protected:
     void OnKeyDown(uint8_t mod, uint8_t key);
@@ -288,8 +288,8 @@ char_handler(char chr)
   return 0;
 }
 
-char ruby_code[4096] = { 0 };
-char last_code_line[1024] = { 0 };
+char ruby_code[2048] = { 0 };
+char last_code_line[512] = { 0 };
 int last_char;
 size_t char_index;
 mrbc_context *cxt;
@@ -347,9 +347,8 @@ getchar_from_serial(void)
 
     Usb.Task();
 
-    key = last_key;
+    key = get_last_key();
     if (key > 0) {
-      last_key = 0;
 
       // Backspace (temporary code)
       if (key == 127 || key == 8) {
