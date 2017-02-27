@@ -118,7 +118,7 @@ MRuby::CrossBuild.new("RX630") do |conf|
   # conf.gem :github => "takjn/mruby-arduino-print", :branch => "master"
 
   # Extention libraries for Gadget Renesas
-  # conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
+  conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
   # # SSD1306 library for mruby-arduino environment
   # conf.gem :github => "takjn/mruby-arduino-ssd1306", :branch => "master"
