@@ -6,3 +6,5 @@ gr_build/*
 *.lo
 *.o
 *.obj
+
+.vscode
