@@ -1,5 +1,6 @@
 # mirb for GR-CITRUS
 mirbをGR-CITRUSに移植してみました。
+OLEDとUSBキーボードを接続してスタンドアロンで動作するバージョンは[standalone](https://github.com/takjn/mirb4gr/tree/standalone)ブランチを参照してください。
 
 ## 使い方
 * mirb4grフォルダにあるcitrus_sketch.binをGR-CITRUSに書き込んでください。
