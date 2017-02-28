@@ -1,4 +1,6 @@
 # mirb for GR-CITRUS
+![mirg4gr](https://github.com/takjn/mirb4gr/raw/master/images/photo1.jpg)
+
 mirbをGR-CITRUSに移植してみました。
 OLEDとUSBキーボードをGR-CITRUSにつなげることで、スタンドアロンで動作します。
 
@@ -18,7 +20,8 @@ USBコネクタはキーボードを接続するためと電源をとるため�
 |ブレッドボード、ジャンパーワイヤ |1 | |
 
 ## 回路図
-T.B.D.
+![overview](https://github.com/takjn/mirb4gr/raw/master/images/photo2.jpg)
+![breadboard](https://github.com/takjn/mirb4gr/raw/master/images/mirb4gr_breadboard.png)
 
 ## 注意事項
 * コネクタ類はハンダ付けが必要です。
