@@ -88,6 +88,7 @@
 #include "fixed_bold10x15.h"
 #include "Wendy3x5.h"
 #include "newbasic3x5.h"
+#include "TomThumbs3x6.h"
 
 /*
  * These fonts require no-pad rendering code

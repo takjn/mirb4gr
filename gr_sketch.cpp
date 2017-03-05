@@ -81,7 +81,7 @@ setup_display(void)
 {
   Wire.begin();
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
-  oled.setFont(Wendy3x5);
+  oled.setFont(TomThumbs3x6);
   oled.setScroll(true);
   oled.clear();
 }
