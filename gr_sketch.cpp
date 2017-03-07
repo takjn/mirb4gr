@@ -6,9 +6,6 @@
 ** immediately. It's a REPL...
 */
 
-// Define if you want standalone mode
-#define STANDALONE
-
 // Define if you want to debug
 // #define DEBUG
 
@@ -26,45 +23,18 @@
 #include <mruby/compile.h>
 #include <mruby/string.h>
 
-#ifdef STANDALONE
-
 /* USB Keyboard support */
 #include "Keyboard.h"
+/* SSD1306 OLED support */
+#include "Display.h"
 
-/* SSD1306Ascii - Text only Arduino Library for SSD1306 OLED displays */
-#define I2C_ADDRESS 0x3C
-#include <Wire.h>
-#include "SSD1306Ascii.h"
-#include "SSD1306AsciiWire.h"
-SSD1306AsciiWire oled;
-
-void
-setup_display(void)
-{
-  Wire.begin();
-  oled.begin(&Adafruit128x64, I2C_ADDRESS);
-  oled.setFont(TomThumbs3x6);
-  oled.setScroll(true);
-  oled.clear();
-}
-void
-handle_backspace(void)
-{
-  oled.setCol(oled.col() - (oled.fontWidth() + 1));
-  oled.clearToEOL();
-}
-
-/* use Serial instead of stdout */
-#define stdout_putc(c)           { Serial.write(c); oled.write(c); }
-#define stdout_write(s, len)     { Serial.write(s, len); for(int i=0;i<len;i++) oled.write(s[i]); }
-#define stdout_print(s)          { Serial.print(s); oled.print(s); }
-#define stdout_println(s)        { Serial.println(s); oled.println(s); }
-#else
+#ifndef DISPLAY_H
 /* use Serial instead of stdout */
 #define stdout_putc(c)           { Serial.write(c); }
 #define stdout_write(s, len)     { Serial.write(s, len); }
 #define stdout_print(s)          { Serial.print(s); }
 #define stdout_println(s)        { Serial.println(s); }
+#define handle_backspace()       // do nothing
 #endif
 
 static void
@@ -268,10 +238,10 @@ setup() {
   Serial.begin(115200);
   while (!Serial);
 
-#ifdef STANDALONE
 #ifdef KEYBOARD_H
   setup_keyboard();
 #endif
+#ifdef DISPLAY_H
   setup_display();
 #endif
 
@@ -299,7 +269,6 @@ getchar_from_serial(void)
   int key;
 
   while (true) {
-#ifdef STANDALONE
 
 #ifdef DEBUG
     digitalWrite(PIN_LED0, HIGH);
@@ -310,7 +279,6 @@ getchar_from_serial(void)
 
 #ifdef KEYBOARD_H
     keyboard_task();
-#endif
 
     key = get_last_key();
     if (key > 0) {
@@ -337,9 +305,7 @@ getchar_from_serial(void)
     		if (char_index > 0) {
           char_index--;
           Serial.print("\b \b");
-#ifdef STANDALONE
           handle_backspace();
-#endif
         }
         continue;
     	}
