@@ -27,8 +27,6 @@
 #include <mruby/string.h>
 
 #ifdef STANDALONE
-// Define serial port
-#define Serial Serial1
 
 /* USB Keyboard support */
 #include "Keyboard.h"
@@ -339,7 +337,7 @@ getchar_from_serial(void)
     		if (char_index > 0) {
           char_index--;
           Serial.print("\b \b");
-#ifdef KEYBOARD_H
+#ifdef STANDALONE
           handle_backspace();
 #endif
         }
