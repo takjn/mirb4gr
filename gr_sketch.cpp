@@ -30,44 +30,8 @@
 // Define serial port
 #define Serial Serial1
 
-/* USB Host support */
-#include <hidboot.h>
-uint8_t last_key = 0;
-uint8_t get_last_key() { uint8_t ret = last_key; last_key = 0; return ret; }
-class KbdRptParser : public KeyboardReportParser {
-  protected:
-    void OnKeyDown(uint8_t mod, uint8_t key);
-};
-void KbdRptParser::OnKeyDown(uint8_t mod, uint8_t key)
-{
-  // Serial.print(key);
-  // WIP: temporarily code
-  if (key == 40) {
-    last_key = 13;  // Enter
-  }
-  else if (key == 42 || key == 76) {
-    last_key = 127;  // Backspace or Delete
-  }
-  else {
-    last_key = OemToAscii(mod, key);
-  }
-}
-
-USB Usb;
-HIDBoot<HID_PROTOCOL_KEYBOARD>    HidKeyboard(&Usb);
-KbdRptParser KbdPrs;
-
-void
-setup_keyboard(void)
-{
-  if (Usb.Init() == -1) {
-    Serial.println("OSC did not start.");
-  }
-
-  delay( 200 );
-
-  HidKeyboard.SetReportParser(0, (HIDReportParser*)&KbdPrs);
-}
+/* USB Keyboard support */
+#include "Keyboard.h"
 
 /* SSD1306Ascii - Text only Arduino Library for SSD1306 OLED displays */
 #define I2C_ADDRESS 0x3C
@@ -307,7 +271,9 @@ setup() {
   while (!Serial);
 
 #ifdef STANDALONE
+#ifdef KEYBOARD_H
   setup_keyboard();
+#endif
   setup_display();
 #endif
 
@@ -344,7 +310,9 @@ getchar_from_serial(void)
     delay(50);
 #endif
 
-    Usb.Task();
+#ifdef KEYBOARD_H
+    keyboard_task();
+#endif
 
     key = get_last_key();
     if (key > 0) {
@@ -371,7 +339,7 @@ getchar_from_serial(void)
     		if (char_index > 0) {
           char_index--;
           Serial.print("\b \b");
-#ifdef STANDALONE
+#ifdef KEYBOARD_H
           handle_backspace();
 #endif
         }
