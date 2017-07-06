@@ -22,8 +22,8 @@ MRuby::CrossBuild.new("RX630") do |conf|
   toolchain :gcc
 
   # Linux
-  # BIN_PATH = "/usr/share/gnurx_v14.03_elf-1/bin"
-  BIN_PATH = "/Applications/IDE4GR.app/Contents/Java/hardware/tools/gcc-rx/rx-elf/rx-elf/bin"
+  BIN_PATH = "/usr/share/gnurx_v14.03_elf-1/bin"
+  # BIN_PATH = "/Applications/IDE4GR.app/Contents/Java/hardware/tools/gcc-rx/rx-elf/rx-elf/bin"
 
   conf.cc do |cc|
     cc.command = "#{BIN_PATH}/rx-elf-gcc"
