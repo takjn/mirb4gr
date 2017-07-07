@@ -58,6 +58,48 @@ p(mrb_state *mrb, mrb_value obj, int prompt)
   stdout_println("");
 }
 
+static void
+printstr(mrb_state *mrb, mrb_value obj)
+{
+  if (mrb_string_p(obj)) {
+    stdout_write(RSTRING_PTR(obj), RSTRING_LEN(obj));
+  }
+}
+
+mrb_value
+my_p(mrb_state *mrb, mrb_value self)
+{
+  mrb_value argv;
+
+  mrb_get_args(mrb, "o", &argv);
+  p(mrb, argv, 0);
+
+  return argv;
+}
+
+mrb_value
+my_print(mrb_state *mrb, mrb_value self)
+{
+  mrb_value argv;
+
+  mrb_get_args(mrb, "o", &argv);
+  printstr(mrb, argv);
+
+  return argv;
+}
+
+mrb_value
+my_puts(mrb_state *mrb, mrb_value self)
+{ 
+  mrb_value argv;
+  
+  mrb_get_args(mrb, "o", &argv);
+  printstr(mrb, argv);
+  stdout_println("");
+  
+  return argv;
+}
+
 /* Guess if the user might want to enter more
  * or if he wants an evaluation of his code now */
 static mrb_bool
@@ -232,6 +274,7 @@ int i;
 mrb_bool code_block_open = FALSE;
 int ai;
 unsigned int stack_keep = 0;
+struct RClass *krn;
 
 void
 setup() {
@@ -261,6 +304,10 @@ setup() {
 
   ai = mrb_gc_arena_save(mrb);
 
+  krn = mrb->kernel_module;
+  mrb_define_method(mrb, krn, "p", my_p, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, krn, "print", my_print, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, krn, "puts", my_puts, MRB_ARGS_REQ(1));
 }
 
 static char
