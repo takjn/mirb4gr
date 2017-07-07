@@ -29,15 +29,6 @@ MRuby::CrossBuild.new("RX630") do |conf|
     cc.command = "#{BIN_PATH}/rx-elf-gcc"
     cc.flags = "-Wall -g -Os -flto -mcpu=rx600 -m64bit-doubles"
     cc.compile_options = "%{flags} -o %{outfile} -c %{infile}"
-
-    #configuration for low memory environment
-    cc.defines << %w(MRB_USE_FLOAT)           # add -DMRB_USE_FLOAT to use float instead of double for floating point numbers
-    cc.defines << %w(MRB_FUNCALL_ARGC_MAX=6)  # argv max size in mrb_funcall
-    cc.defines << %w(MRB_HEAP_PAGE_SIZE=24)   # number of object per heap page
-    cc.defines << %w(MRB_USE_IV_SEGLIST)      # use segmented list for IV table
-    cc.defines << %w(MRB_IVHASH_INIT_SIZE=3)  # initial size for IV khash; ignored when MRB_USE_IV_SEGLIST is set
-    cc.defines << %w(KHASH_DEFAULT_SIZE=2)    # default size of khash table bucket
-    cc.defines << %w(POOL_PAGE_SIZE=256)      # effective only for use with mruby-eval
   end
 
   conf.cxx do |cxx|
@@ -86,7 +77,7 @@ MRuby::CrossBuild.new("RX630") do |conf|
   #conf.gem :core => "mruby-hash-ext"
   #conf.gem :core => "mruby-inline-struct"
   #conf.gem :core => "mruby-kernel-ext"
-  # conf.gem :core => "mruby-math"
+  conf.gem :core => "mruby-math"
   # conf.gem :core => "mruby-numeric-ext"
   #conf.gem :core => "mruby-object-ext"
   #conf.gem :core => "mruby-objectspace"
@@ -115,19 +106,10 @@ MRuby::CrossBuild.new("RX630") do |conf|
   # Arduino API
   conf.gem :github => "takjn/mruby-arduino", :branch => "master"
 
-  # standard print/puts/p for mruby-arduino environments
-  # conf.gem :github => "takjn/mruby-arduino-print", :branch => "master"
-
   # Extention libraries for Gadget Renesas
   conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
-  # # SSD1306 library for mruby-arduino environment
-  # conf.gem :github => "takjn/mruby-arduino-ssd1306", :branch => "master"
-
   # # NeoPixel library for mruby-arduino environment
-  # conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
-
-  # # WavMp3p library for mruby-arduino environment.
-  # conf.gem :github => "takjn/mruby-gr-wavmp3p", :branch => "master"
+  conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
 
 end
