@@ -109,7 +109,7 @@ MRuby::CrossBuild.new("RX630") do |conf|
   # Extention libraries for Gadget Renesas
   conf.gem :github => "takjn/mruby-gr-citrus", :branch => "master"
 
-  # # NeoPixel library for mruby-arduino environment
-  conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
+  # NeoPixel library for mruby-arduino environment
+  # conf.gem :github => "takjn/mruby-arduino-neopixel", :branch => "master"
 
 end
